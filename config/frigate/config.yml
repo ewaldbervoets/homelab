@@ -16,8 +16,8 @@ birdseye:
   enabled: true
   mode: continuous
 
-ffmpeg:
-  hwaccel_args: preset-vaapi
+# ffmpeg:
+#   hwaccel_args: preset-vaapi
 
 go2rtc:
   streams:
