@@ -1,0 +1,24 @@
+# This file contains additional configurations for Traefik
+# You can add custom middlewares, routers, or services here
+
+# Example middleware for security headers
+# http:
+#   middlewares:
+#     securityHeaders:
+#       headers:
+#         frameDeny: true
+#         browserXssFilter: true
+#         contentTypeNosniff: true
+#         forceSTSHeader: true
+#         stsIncludeSubdomains: true
+#         stsPreload: true
+#         stsSeconds: 31536000
+#         customFrameOptionsValue: SAMEORIGIN
+#         contentSecurityPolicy: "default-src 'self'; frame-ancestors 'self'"
+
+#     # Example rate limiting middleware
+#     rateLimit:
+#       rateLimit:
+#         average: 100
+#         burst: 50
+# # Add additional configurations below as needed
