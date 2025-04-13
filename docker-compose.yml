@@ -100,12 +100,13 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
-    restart: unless-stopped
-    networks:
-      - internal
+    restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./data/portainer:/data
+    ports:
+      - 9443:9443
+      - 8000:8000
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)"
