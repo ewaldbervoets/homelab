@@ -59,7 +59,7 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].sans=${SANS_DOMAIN}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.tail16c8e5.ts.net`)"
+      - "traefik.http.routers.traefik.rule=Host(`dashboard.ewaldbervoets.com`)"
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
       - "traefik.http.routers.traefik.service=api@internal"
