@@ -22,3 +22,18 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Frigate runtime files
+config/frigate/.exports
+config/frigate/.jwt_secret
+config/frigate/.timeline
+config/frigate/.vacuum
+config/frigate/backup.db
+config/frigate/backup_config.yaml
+config/frigate/frigate.db
+config/frigate/frigate.db-*
+config/frigate/*.db-shm
+config/frigate/*.db-wal
+
+# Tailscale state
+config/tailscale/
