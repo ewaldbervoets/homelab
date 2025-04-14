@@ -1,66 +1,109 @@
 version: "3.8"
 
-volumes:
-  traefik-certs:
-    name: traefik-certs
+networks:
+  homelab:
+    name: homelab
 
 services:
-  tailscale-traefik:
+  # Tailscale for network connectivity
+  tailscale:
     image: tailscale/tailscale
     container_name: tailscale
-    hostname: traefik
+    hostname: homelab-tailscale
+    restart: unless-stopped
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
+      - TS_EXTRA_ARGS=--hostname=homelab --accept-dns=true
     volumes:
-      - ./tailscale-traefik/state:/var/lib/tailscale
+      - ./config/tailscale:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - net_admin
       - sys_module
-    restart: unless-stopped
+    networks:
+      - homelab
+    ports:
+      - "80:80"
+      - "443:443"
+
+  # Traefik - Reverse Proxy
   traefik:
-    image: traefik
+    image: traefik:v2.10
     container_name: traefik
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
+    privileged: true
     environment:
-      - TZ=Europe/Amsterdam # Change this to your timezone
-      - CF_API_EMAIL=${CF_API_EMAIL}
-      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+      - TZ=${TZ}
+    networks:
+      - homelab
     depends_on:
-      - tailscale-traefik
-    network_mode: service:tailscale-traefik
+      - tailscale
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro # Docker socket to watch for Traefik
-      - traefik-certs:/certs # Docker volume to store the acme file for the Certifactes
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik:/etc/traefik
     command:
-      # Tell Traefik to discover containers using the Docker API
+      # Docker provider
       - --providers.docker=true
       - --providers.docker.exposedByDefault=false
-      # Enable the Trafik dashboard
+      - --providers.docker.network=homelab
+      # API and Dashboard
       - --api.dashboard=true
-      # Set up LetsEncrypt
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
-      - --certificatesresolvers.letsencrypt.acme.email=${LE_EMAIL}
-      - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
-      # Set up an insecure listener that redirects all traffic to TLS
+      # Entry Points - simple HTTP configuration
       - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.web.http.redirections.entrypoint.scheme=https
-      - --entrypoints.websecure.address=:443
-      # Set up the TLS configuration for our websecure listener
-      - --entrypoints.websecure.http.tls=true
-      - --entrypoints.websecure.http.tls.certResolver=letsencrypt
-      - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN}
-      - --entrypoints.websecure.http.tls.domains[0].sans=${SANS_DOMAIN}
+      # Skip TLS verification since we're using Tailscale HTTPS
+      - --serversTransport.insecureSkipVerify=true
+      - --log.level=INFO
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`dashboard.ewaldbervoets.com`)"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
-      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.tail16c8e5.ts.net`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      - "traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH}"
+      - "traefik.http.routers.dashboard.middlewares=dashboard-auth"
+      - "traefik.docker.network=homelab"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+
+  # Frigate - NVR
+  frigate:
+    image: ghcr.io/blakeblackshear/frigate:stable
+    container_name: frigate
+    restart: unless-stopped
+    shm_size: "512mb"
+    volumes:
+      - ./config/frigate:/config # Config files on SSD
+      - /etc/localtime:/etc/localtime:ro
+      - /mnt/frigate:/media # Recordings on separate mount
+      - ./data/frigate/database:/database # Database on SSD
+    ports:
+      - "8971:8971"
+      - "5000:5000" # Internal unauthenticated access. Expose carefully.
+      - "8554:8554" # RTSP feeds
+      - "8555:8555/tcp" # WebRTC over tcp
+      - "8555:8555/udp" # WebRTC over udp
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frigate.rule=Host(`frigate.tail16c8e5.ts.net`)"
+      - "traefik.http.routers.frigate.entrypoints=web"
+      - "traefik.http.services.frigate.loadbalancer.server.port=5000"
+      - "traefik.docker.network=homelab"
+
+  # Portainer - Docker Management UI
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    networks:
+      - homelab
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/portainer:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.tail16c8e5.ts.net`)"
+      - "traefik.http.routers.portainer.entrypoints=web"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+      - "traefik.docker.network=homelab"
