@@ -1,25 +1,12 @@
 version: "3.8"
 
 services:
-  caddy:
-    image: caddy:latest
-    container_name: caddy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    networks:
-      - homelab
-
   frigate:
     image: ghcr.io/blakeblackshear/frigate:stable
     container_name: frigate
     restart: unless-stopped
     shm_size: "512mb"
+    privileged: true
     devices:
       - /dev/bus/usb:/dev/bus/usb
     volumes:
@@ -35,9 +22,6 @@ services:
       - "8555:8555/udp"
     networks:
       - homelab
-    labels:
-      caddy: frigate.homelab.local
-      caddy.reverse_proxy: "{{upstreams 8971}}"
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -48,9 +32,6 @@ services:
       - portainer_data:/data
     networks:
       - homelab
-    labels:
-      caddy: portainer.homelab.local
-      caddy.reverse_proxy: "{{upstreams 9000}}"
 
   pihole:
     image: pihole/pihole:latest
@@ -59,17 +40,15 @@ services:
     environment:
       - TZ=Europe/Brussels
       - WEBPASSWORD=${PIHOLE_WEBPASSWORD}
+      - FTLCONF_dns_listeningMode=all
     volumes:
-      - pihole_etc:/etc/pihole
-      - dnsmasq_etc:/etc/dnsmasq.d
-    dns:
-      - 127.0.0.1
-      - 1.1.1.1
+      - ./etc-pihole:/etc/pihole
+    cap_add:
+      - NET_ADMIN
+      - SYS_TIME
+      - SYS_NICE
     networks:
       - homelab
-    labels:
-      caddy: pihole.homelab.local
-      caddy.reverse_proxy: "{{upstreams 80}}"
 
   tailscale:
     image: tailscale/tailscale:stable
@@ -87,12 +66,35 @@ services:
       - TS_EXTRA_ARGS=--ssh
     restart: unless-stopped
 
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    volumes:
+      - /mnt:/srv
+      - ./config/filebrowser/filebrowser.db:/database.db
+    ports:
+      - 8080:80
+    environment:
+      - PUID=0
+      - PGID=0
+    restart: unless-stopped
+    networks:
+      - homelab
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    volumes:
+      - kuma_data:/app/data
+    ports:
+      - 3001:3001
+    restart: unless-stopped
+    networks:
+      - homelab
+
 volumes:
-  caddy_data:
-  caddy_config:
   portainer_data:
-  pihole_etc:
-  dnsmasq_etc:
+  tailscale_data:
+  kuma_data:
 
 networks:
   homelab:

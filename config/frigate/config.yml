@@ -16,8 +16,8 @@ birdseye:
   enabled: true
   mode: continuous
 
-# ffmpeg:
-#   hwaccel_args: preset-vaapi
+ffmpeg:
+  hwaccel_args: preset-vaapi
 
 go2rtc:
   streams:
@@ -63,8 +63,8 @@ go2rtc:
 record:
   enabled: true
   retain:
-    days: 3
-    mode: motion
+    days: 7
+    mode: all
   alerts:
     retain:
       days: 30
@@ -72,16 +72,6 @@ record:
     retain:
       days: 30
 cameras:
-  # t1:
-  #   enabled: true
-  #   ffmpeg:
-  #     inputs:
-  #       - path: rtsp://localhost:8554/t1_hq
-  #         roles:
-  #           - record
-  #       - path: rtsp://localhost:8554/t1_lq
-  #         roles:
-  #           - detect
   camera_garage_bel:
     ffmpeg:
       inputs:

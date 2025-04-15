@@ -35,5 +35,8 @@ config/frigate/frigate.db-*
 config/frigate/*.db-shm
 config/frigate/*.db-wal
 
+
+
 # Tailscale state
 config/tailscale/
+tailscale-traefik
