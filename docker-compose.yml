@@ -2,24 +2,28 @@ version: "3.8"
 
 services:
   caddy:
-    image: caddy:latest
+    image: lucaslorentz/caddy-docker-proxy:ci-alpine
     container_name: caddy
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - caddy_data:/data
       - caddy_config:/config
     networks:
       - homelab
+    environment:
+      - CADDY_INGRESS_NETWORK=homelab
+      - CADDY_HTTPS_DISABLED=true
 
   frigate:
     image: ghcr.io/blakeblackshear/frigate:stable
     container_name: frigate
     restart: unless-stopped
     shm_size: "512mb"
+    privileged: true
     devices:
       - /dev/bus/usb:/dev/bus/usb
     volumes:
@@ -37,7 +41,7 @@ services:
       - homelab
     labels:
       caddy: frigate.homelab.local
-      caddy.reverse_proxy: "{{upstreams 8971}}"
+      caddy.reverse_proxy: "{{upstreams 5000}}"
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -93,6 +97,7 @@ volumes:
   portainer_data:
   pihole_etc:
   dnsmasq_etc:
+  tailscale_data:
 
 networks:
   homelab:
