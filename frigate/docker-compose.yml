@@ -24,3 +24,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.frigate.loadbalancer.server.port=8971"
       - "traefik.http.routers.frigate.rule=Host(`frigate.ewaldbervoets.com`)"
+
+networks:
+  homelab:
+    external: true
