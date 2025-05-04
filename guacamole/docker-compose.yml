@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    restart: unless-stopped
+
+  guacamole:
+    image: guacamole/guacamole
+    container_name: guacamole
+    depends_on:
+      - guacd
+    environment:
+      GUACD_HOSTNAME: guacd
+      MYSQL_HOSTNAME: guac-mysql
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_user
+      MYSQL_PASSWORD: supersecret
+      MYSQL_ROOT_PASSWORD: rootpassword
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.guac.rule=Host(`guac.ewaldbervoets.com`)"
+      - "traefik.http.routers.guac.entrypoints=websecure"
+      - "traefik.http.routers.guac.tls.certresolver=letsencrypt"
+      - "traefik.http.services.guac.loadbalancer.server.port=8080"
+
+  guac-mysql:
+    image: mysql:5.7
+    container_name: guac-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_user
+      MYSQL_PASSWORD: supersecret
+    volumes:
+      - guac-mysql:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  guac-mysql:
