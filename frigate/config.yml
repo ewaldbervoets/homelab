@@ -7,8 +7,6 @@ mqtt:
   topic_prefix: frigate
   client_id: frigate
 
-media_dir: /media/frigate
-
 detectors:
   coral:
     type: edgetpu
