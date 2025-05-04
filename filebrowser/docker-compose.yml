@@ -6,7 +6,7 @@ services:
       - "8081:80"
     volumes:
       - /:/srv
-      - /etc/filebrowser/filebrowser.db:/database.db
+      - ./filebrowser.db:/database.db
     restart: unless-stopped
     user: "1000:1000"
     labels:
