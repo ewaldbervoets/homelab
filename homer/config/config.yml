@@ -1,0 +1,32 @@
+title: "My Homelab Dashboard"
+subtitle: "Lenovo ThinkCentre M720q"
+theme: default
+columns: 2
+connectivityCheck: true
+
+services:
+  - name: Core Services
+    icon: fas fa-server
+    items:
+      - name: Frigate
+        logo: https://raw.githubusercontent.com/blakeblackshear/frigate/main/docs/assets/icon.png
+        url: https://frigate.ewaldbervoets.com
+        type: app
+      - name: FileBrowser
+        logo: https://filebrowser.org/static/img/logo.svg
+        url: https://files.ewaldbervoets.com
+        type: app
+      - name: Traefik
+        logo: https://traefik.io/traefik.logo.svg
+        url: https://traefik.ewaldbervoets.com
+        type: app
+
+  - name: Tools
+    icon: fas fa-tools
+    items:
+      - name: Tailscale Admin
+        url: https://login.tailscale.com
+        icon: fas fa-network-wired
+      - name: Portainer
+        url: http://localhost:9000 # or change to your Tailscale IP
+        icon: fab fa-docker
