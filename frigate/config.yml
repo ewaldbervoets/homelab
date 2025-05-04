@@ -67,7 +67,7 @@ record:
   enabled: true
   retain:
     days: 7
-    mode: motion
+    mode: all
   alerts:
     retain:
       days: 30
