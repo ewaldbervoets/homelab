@@ -20,3 +20,7 @@ services:
       - "8555:8555/udp"
     networks:
       - homelab
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.frigate.loadbalancer.server.port=8971"
+      - "traefik.http.routers.frigate.rule=Host(`frigate.ewaldbervoets.com`)"
