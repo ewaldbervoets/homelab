@@ -9,3 +9,8 @@ services:
       - /etc/filebrowser/filebrowser.db:/database.db
     restart: unless-stopped
     user: "1000:1000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.filebrowser.rule=Host(`files.ewaldbervoets.com`)"
+      - "traefik.http.routers.filebrowser.entrypoints=websecure"
+      - "traefik.http.routers.filebrowser.tls.certresolver=letsencrypt"
