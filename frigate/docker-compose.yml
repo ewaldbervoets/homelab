@@ -26,8 +26,8 @@ services:
       - "traefik.http.routers.frigate.entrypoints=websecure"
       - "traefik.http.routers.frigate.tls.certresolver=letsencrypt"
       - "traefik.http.services.frigate.loadbalancer.server.port=8971"
-      - "traefik.http.services.frigate.loadbalancer.server.scheme=https"
-      - "traefik.http.services.frigate.loadbalancer.server.insecureSkipVerify=true"
+      - "traefik.http.services.frigate.loadbalancer.server.scheme=http"
+      - "traefik.http.routers.frigate.service=frigate"
 
 networks:
   homelab:
