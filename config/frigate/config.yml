@@ -7,6 +7,9 @@ mqtt:
   topic_prefix: frigate
   client_id: frigate
 
+tls:
+  enabled: false
+
 detectors:
   coral:
     type: edgetpu
