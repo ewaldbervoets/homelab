@@ -1,0 +1,11 @@
+services:
+  filebrowser:
+    image: filebrowser/filebrowser
+    container_name: filebrowser
+    ports:
+      - "8081:80"
+    volumes:
+      - /:/srv
+      - /etc/filebrowser/filebrowser.db:/database.db
+    restart: unless-stopped
+    user: "1000:1000"
