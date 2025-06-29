@@ -66,14 +66,14 @@ go2rtc:
 record:
   enabled: true
   retain:
-    days: 7
+    days: 2
     mode: all
   alerts:
     retain:
-      days: 30
+      days: 14
   detections:
     retain:
-      days: 30
+      days: 14
 cameras:
   camera_garage_bel:
     ffmpeg:
