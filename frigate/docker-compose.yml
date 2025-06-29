@@ -35,6 +35,7 @@ services:
     restart: unless-stopped
     volumes:
       - /media/frigate:/media/frigate:ro
+      - ./diskcheck/diskcheck.py:/app/diskcheck.py:ro
     command: >
       sh -c "pip install --no-cache-dir flask &&
              python /app/diskcheck.py"
