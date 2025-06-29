@@ -29,6 +29,20 @@ services:
       - "traefik.http.services.frigate.loadbalancer.server.scheme=http"
       - "traefik.http.routers.frigate.service=frigate"
 
+  frigate-diskcheck:
+    image: python:3.12-slim
+    container_name: frigate-diskcheck
+    restart: unless-stopped
+    volumes:
+      - /media/frigate:/media/frigate:ro
+    command: >
+      sh -c "pip install --no-cache-dir flask &&
+             python /app/diskcheck.py"
+    ports:
+      - "8085:8085"
+    networks:
+      - homelab
+
 networks:
   homelab:
     external: true
