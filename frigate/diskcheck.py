@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def disk_usage():
-    total, used, free = shutil.disk_usage("/media/frigate")
+    total, used, free = shutil.disk_usage("/mnt/frigate_wd")
     percent_used = used / total * 100
     status = "ALERT" if percent_used >= 90 else "OK"
     return jsonify({

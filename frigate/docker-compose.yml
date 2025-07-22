@@ -10,7 +10,7 @@ services:
     volumes:
       - ./config.yml:/config/config.yml
       - /etc/localtime:/etc/localtime:ro
-      - /media/frigate:/media/frigate
+      - /mnt/frigate_wd:/media/frigate
       - ./data/frigate/database:/database
     ports:
       - "8971:8971"
@@ -34,7 +34,7 @@ services:
     container_name: frigate-diskcheck
     restart: unless-stopped
     volumes:
-      - /media/frigate:/media/frigate:ro
+      - /mnt/frigate_wd:/mnt/frigate_wd:ro
       - ./diskcheck.py:/app/diskcheck.py:ro
     command: >
       sh -c "pip install --no-cache-dir flask &&
