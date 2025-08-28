@@ -5,7 +5,7 @@ services:
     volumes:
       - ./config:/www/assets
     ports:
-      - 8080:8080
+      - 8083:8080
     user: 1000:1000
     environment:
       - INIT_ASSETS=1
