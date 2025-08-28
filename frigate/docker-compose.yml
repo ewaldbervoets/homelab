@@ -23,7 +23,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frigate.rule=Host(`frigate.ewaldbervoets.com`)"
-      - "traefik.http.routers.frigate.entrypoints=websecure"
+      # - "traefik.http.routers.frigate.entrypoints=websecure"
       - "traefik.http.routers.frigate.tls.certresolver=letsencrypt"
       - "traefik.http.services.frigate.loadbalancer.server.port=8971"
       - "traefik.http.services.frigate.loadbalancer.server.scheme=http"
