@@ -1,12 +1,48 @@
 services:
   traefik:
     image: traefik:v3.5
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
-    ports:
-      - "80:80"
-      - "8080:8080"
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - TZ=Europe/Amsterdam # Change this to your timezone
+      - CF_API_EMAIL=${CF_API_EMAIL}
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+    depends_on:
+      - tailscale-traefik
+    network_mode: service:tailscale-traefik
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Docker socket to watch for Traefik
+      - traefik-certs:/certs # Docker volume to store the acme file for the Certifactes
+    command:
+      # Tell Traefik to discover containers using the Docker API
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      # Enable the Trafik dashboard
+      - --api.dashboard=true
+      # Set up LetsEncrypt
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.letsencrypt.acme.email=${LE_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
+      # Set up an insecure listener that redirects all traffic to TLS
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      # Set up the TLS configuration for our websecure listener
+      - --entrypoints.websecure.http.tls=true
+      - --entrypoints.websecure.http.tls.certResolver=letsencrypt
+      - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN}
+      - --entrypoints.websecure.http.tls.domains[0].sans=${SANS_DOMAIN}
+    labels:
+      - "traefik.enable=true"
+      - 'traefik.http.routers.traefik.rule=Host(`traefik.ewaldbervoets.com`)'
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+volumes:
+  traefik-certs:
+    name: traefik-certs
