@@ -51,6 +51,8 @@ services:
       - --entrypoints.websecure.http.tls.certResolver=letsencrypt
       - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN}
       - --entrypoints.websecure.http.tls.domains[0].sans=${SANS_DOMAIN}
+      # Log
+      - --log.level=DEBUG
     labels:
       - "traefik.enable=true"
       - 'traefik.http.routers.traefik.rule=Host(`traefik.ewaldbervoets.com`)'
