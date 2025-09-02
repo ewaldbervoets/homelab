@@ -22,7 +22,7 @@ services:
       - "traefik.http.routers.dozzle.rule=Host(`dozzle.ewaldbervoets.com`)"
       - "traefik.http.routers.dozzle.entrypoints=websecure"
       - "traefik.http.routers.dozzle.tls.certresolver=letsencrypt"
-      - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+      - "traefik.http.services.dozzle.loadbalancer.server.port=8082"
       - "traefik.http.services.dozzle.loadbalancer.server.scheme=http"
       - "traefik.http.routers.dozzle.service=dozzle"
 
