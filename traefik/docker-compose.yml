@@ -14,6 +14,8 @@ services:
       - net_admin
       - sys_module
     restart: unless-stopped
+    networks:
+      - homelab
   traefik:
     image: traefik:v3.5
     container_name: traefik
@@ -63,3 +65,7 @@ services:
 volumes:
   traefik-certs:
     name: traefik-certs
+
+networks:
+  homelab:
+    external: true
