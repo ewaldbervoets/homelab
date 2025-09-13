@@ -23,7 +23,7 @@ birdseye:
   mode: continuous
 
 ffmpeg:
-  hwaccel_args: preset-vaapi
+  hwaccel_args: preset-intel-qsv-h265
 
 go2rtc:
   streams:
@@ -91,6 +91,7 @@ cameras:
             - detect
       output_args:
         record: preset-record-generic-audio-copy
+      hwaccel_args: preset-intel-qsv-h264
     motion: {}
     zones:
       garage_bel:
@@ -113,6 +114,7 @@ cameras:
             - detect
       output_args:
         record: preset-record-generic-audio-copy
+      hwaccel_args: preset-intel-qsv-h264
     zones:
       voordeur:
         coordinates: 
