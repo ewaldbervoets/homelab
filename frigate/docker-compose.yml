@@ -18,6 +18,8 @@ services:
       - "8554:8554"
       - "8555:8555/tcp"
       - "8555:8555/udp"
+    networks:
+      - homelab
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frigate.rule=Host(`frigate.ewaldbervoets.com`)"
@@ -39,3 +41,9 @@ services:
              python /app/diskcheck.py"
     ports:
       - "8085:8085"
+    networks:
+      - homelab
+
+networks:
+  homelab:
+    external: true
