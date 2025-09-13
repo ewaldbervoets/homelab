@@ -41,9 +41,3 @@ services:
              python /app/diskcheck.py"
     ports:
       - "8085:8085"
-    networks:
-      - homelab
-
-networks:
-  homelab:
-    external: true
