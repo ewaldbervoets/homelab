@@ -29,38 +29,40 @@ go2rtc:
   streams:
     stairs_hq:
       - rtsp://ha:homeassistant66@192.168.0.11:554/cam/realmonitor?channel=1&subtype=0
-      - ffmpeg:stairs_hq#audio=opus
+      - ffmpeg:stairs_hq#video=copy#audio=opus
     stairs_lq:
       - rtsp://ha:homeassistant66@192.168.0.11:554/cam/realmonitor?channel=1&subtype=2
+
     front_hq:
       - rtsp://ha:homeassistant66@192.168.0.13:554/cam/realmonitor?channel=1&subtype=0
-      - ffmpeg:front_hq#audio=opus
+      - ffmpeg:front_hq#video=copy#audio=opus
     front_lq:
       - rtsp://ha:homeassistant66@192.168.0.13:554/cam/realmonitor?channel=1&subtype=2
+
     side_hq:
       - rtsp://ha:homeassistant66@192.168.0.12:554/cam/realmonitor?channel=1&subtype=0
-      - ffmpeg:side_hq#audio=opus
+      - ffmpeg:side_hq#video=copy#audio=opus
     side_lq:
       - rtsp://ha:homeassistant66@192.168.0.12:554/cam/realmonitor?channel=1&subtype=2
-    # t1_hq:
-    #   - rtsp://ha:homeassistant66@192.168.0.14:554/cam/realmonitor?channel=1&subtype=0
-    # t1_lq:
-    #   - rtsp://ha:homeassistant66@192.168.0.14:554/cam/realmonitor?channel=1&subtype=2
+
     back_hq:
       - rtsp://ha:homeassistant66@192.168.0.15:554/cam/realmonitor?channel=1&subtype=0
-      - ffmpeg:side_hq#audio=opus
+      - ffmpeg:back_hq#video=copy#audio=opus         # <-- fixed
     back_lq:
       - rtsp://ha:homeassistant66@192.168.0.15:554/cam/realmonitor?channel=1&subtype=2
+
     garage_bel_hq:
-      - ffmpeg:http://192.168.0.123/flv?port=1935&app=bcs&stream=channel0_main.bcs&user=ha&password=homeassistant66#video=copy#audio=copy#audio=opus
+      - ffmpeg:http://192.168.0.123/flv?port=1935&app=bcs&stream=channel0_main.bcs&user=ha&password=homeassistant66#video=copy#audio=opus
       - rtsp://ha:homeassistant66@192.168.0.123:554/Preview_01_sub
     garage_bel_lq:
       - ffmpeg:http://192.168.0.123/flv?port=1935&app=bcs&stream=channel0_ext.bcs&user=ha&password=homeassistant66
+
     voordeur_bel_hq:
-      - ffmpeg:http://192.168.0.229/flv?port=1935&app=bcs&stream=channel0_main.bcs&user=ha&password=homeassistant66#video=copy#audio=copy#audio=opus
+      - ffmpeg:http://192.168.0.229/flv?port=1935&app=bcs&stream=channel0_main.bcs&user=ha&password=homeassistant66#video=copy#audio=opus
       - rtsp://ha:homeassistant66@192.168.0.229:554/Preview_01_sub
     voordeur_bel_lq:
       - ffmpeg:http://192.168.0.229/flv?port=1935&app=bcs&stream=channel0_ext.bcs&user=ha&password=homeassistant66
+
   webrtc:
     candidates:
       - 192.168.0.199:8555
@@ -82,84 +84,85 @@ cameras:
     ffmpeg:
       inputs:
         - path: rtsp://localhost:8554/garage_bel_hq
-          input_args: preset-rtsp-restream
-          roles:
-            - record
+          input_args: preset-rtsp-generic
+          roles: [record]
         - path: rtsp://localhost:8554/garage_bel_lq
-          input_args: preset-rtsp-restream
-          roles:
-            - detect
+          input_args: preset-rtsp-generic
+          roles: [detect]
       output_args:
         record: preset-record-generic-audio-copy
       hwaccel_args: preset-intel-qsv-h264
     motion: {}
     zones:
       garage_bel:
-        coordinates: 
-          0.476,0.647,0.821,0.63,0.839,0.534,1,0.522,0.996,0.997,-0.002,0.997,0.001,0.222,0.109,0.246,0.093,0.451,0.356,0.497
+        coordinates: 0.476,0.647,0.821,0.63,0.839,0.534,1,0.522,0.996,0.997,-0.002,0.997,0.001,0.222,0.109,0.246,0.093,0.451,0.356,0.497
         loitering_time: 0
     review:
       alerts:
         required_zones: garage_bel
+
   camera_deur_bel:
     ffmpeg:
       inputs:
         - path: rtsp://localhost:8554/voordeur_bel_hq
-          input_args: preset-rtsp-restream
-          roles:
-            - record
+          input_args: preset-rtsp-generic
+          roles: [record]
         - path: rtsp://localhost:8554/voordeur_bel_lq
-          input_args: preset-rtsp-restream
-          roles:
-            - detect
+          input_args: preset-rtsp-generic
+          roles: [detect]
       output_args:
         record: preset-record-generic-audio-copy
       hwaccel_args: preset-intel-qsv-h264
     zones:
       voordeur:
-        coordinates: 
-          0.34,0.726,0.608,0.673,0.694,0.732,0.79,0.661,0.998,0.556,0.998,0.997,0.391,0.991
+        coordinates: 0.34,0.726,0.608,0.673,0.694,0.732,0.79,0.661,0.998,0.556,0.998,0.997,0.391,0.991
         loitering_time: 0
     review:
       alerts:
         required_zones: voordeur
       detections:
         required_zones: voordeur
+
   camera_back:
     enabled: true
     ffmpeg:
+      hwaccel_args: preset-intel-qsv-h265
       inputs:
         - path: rtsp://localhost:8554/back_hq
-          roles:
-            - record
+          input_args: preset-rtsp-generic
+          roles: [record]
         - path: rtsp://localhost:8554/back_lq
-          roles:
-            - detect
+          input_args: preset-rtsp-generic
+          roles: [detect]
+    detect:
+      fps: 5
     zones:
       back_garden:
-        coordinates: 
-          0.804,0.139,0.531,0.094,0.336,0.206,0.423,0.405,0.275,0.511,0.172,0.666,0.137,0.994,0.9,0.993
+        coordinates: 0.804,0.139,0.531,0.094,0.336,0.206,0.423,0.405,0.275,0.511,0.172,0.666,0.137,0.994,0.9,0.993
         loitering_time: 0
         objects: person
         inertia: 3
     motion:
       mask: 0.003,0.377,0.527,0.081,0.995,0.152,0.995,0.008,0.002,0.006
+
   camera_stairs:
     enabled: true
     ffmpeg:
+      hwaccel_args: preset-intel-qsv-h265
       output_args:
         record: preset-record-generic-audio-copy
       inputs:
         - path: rtsp://localhost:8554/stairs_hq
-          roles:
-            - record
+          input_args: preset-rtsp-generic
+          roles: [record]
         - path: rtsp://localhost:8554/stairs_lq
-          roles:
-            - detect
+          input_args: preset-rtsp-generic
+          roles: [detect]
+    detect:
+      fps: 5
     zones:
       stairs:
-        coordinates: 
-          0.307,0.38,0.344,0.616,0.404,0.664,0.457,0.663,0.486,0.682,0.29,1,0.001,0.999,0,0.299,0.145,0.456,0.241,0.403
+        coordinates: 0.307,0.38,0.344,0.616,0.404,0.664,0.457,0.663,0.486,0.682,0.29,1,0.001,0.999,0,0.299,0.145,0.456,0.241,0.403
         loitering_time: 0
         inertia: 3
         objects: person
@@ -175,18 +178,22 @@ cameras:
       mask:
         - 0.281,0.671,0.335,0.692,0.336,0.756,0.281,0.749
         - 0.061,0.81,0.107,0.79,0.091,0.681,0.053,0.705
+
   camera_front:
     enabled: true
     ffmpeg:
+      hwaccel_args: preset-intel-qsv-h265
       output_args:
         record: preset-record-generic-audio-copy
       inputs:
         - path: rtsp://localhost:8554/front_hq
-          roles:
-            - record
+          input_args: preset-rtsp-generic
+          roles: [record]
         - path: rtsp://localhost:8554/front_lq
-          roles:
-            - detect
+          input_args: preset-rtsp-generic
+          roles: [detect]
+    detect:
+      fps: 5
     motion:
       mask: 0.552,0,0,0,0,0.106,0,0.536,0.152,0.232,0.554,0.091,1,0.391,1,0
       threshold: 40
@@ -194,8 +201,7 @@ cameras:
       improve_contrast: 'true'
     zones:
       front_garden:
-        coordinates: 
-          0.197,0.235,0.265,0.224,0.361,0.169,0.384,0.261,0.668,0.492,0.516,0.994,0.284,0.994,0.243,0.682,0.187,0.362
+        coordinates: 0.197,0.235,0.265,0.224,0.361,0.169,0.384,0.261,0.668,0.492,0.516,0.994,0.284,0.994,0.243,0.682,0.187,0.362
         inertia: 3
         loitering_time: 0
       front_door:
@@ -210,18 +216,22 @@ cameras:
           - front_door
     objects:
       mask: 0.587,0.19,0.75,0.216,0.738,0.499,0.584,0.419
+
   camera_side:
     enabled: true
     ffmpeg:
+      hwaccel_args: preset-intel-qsv-h265
       output_args:
         record: preset-record-generic-audio-copy
       inputs:
         - path: rtsp://localhost:8554/side_hq
-          roles:
-            - record
+          input_args: preset-rtsp-generic
+          roles: [record]
         - path: rtsp://localhost:8554/side_lq
-          roles:
-            - detect
+          input_args: preset-rtsp-generic
+          roles: [detect]
+    detect:
+      fps: 5
     motion:
       mask: 0.236,0,0.583,0,1,0,1,0.166,0.386,0.097
       threshold: 40
@@ -229,11 +239,11 @@ cameras:
       improve_contrast: 'true'
     zones:
       side:
-        coordinates: 
-          0.421,0.185,0.61,0.245,0.664,0.244,0.711,0.183,0.819,0.172,0.851,0.479,0.998,0.991,0,1,0,0.68,0.041,0.317,0.21,0.205
+        coordinates: 0.421,0.185,0.61,0.245,0.664,0.244,0.711,0.183,0.819,0.172,0.851,0.479,0.998,0.991,0,1,0,0.68,0.041,0.317,0.21,0.205
         loitering_time: 0
         inertia: 3
     review:
       alerts:
         required_zones: side
+
 version: 0.15-1
