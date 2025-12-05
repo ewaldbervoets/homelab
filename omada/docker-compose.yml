@@ -8,7 +8,6 @@ services:
         soft: 4096
         hard: 8192
     stop_grace_period: 60s
-    network_mode: host
     environment:
       - PUID=508
       - PGID=508
@@ -29,9 +28,34 @@ services:
       - SSL_CERT_NAME=tls.crt
       - SSL_KEY_NAME=tls.key
       - TZ=Etc/UTC
+    networks:
+      - homelab
+    ports:
+      # Controller UI directly via LAN (optional if you only want Traefik)
+      - "8043:8043"
+      # Adoption / discovery / mgmt
+      - "29810:29810/udp"
+      - "29811:29811"
+      - "29812:29812"
+      - "29813:29813"
+      - "29814:29814"
+      - "29815:29815"
+      - "29816:29816"
     volumes:
       - omada-data:/opt/tplink/EAPController/data
       - omada-logs:/opt/tplink/EAPController/logs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.omada.rule=Host(`omada.ewaldbervoets.com`)"
+      - "traefik.http.routers.omada.entrypoints=websecure"
+      - "traefik.http.routers.omada.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.omada.service=omada"
+      - "traefik.http.services.omada.loadbalancer.server.port=8043"
+      - "traefik.http.services.omada.loadbalancer.server.scheme=https"
+
+networks:
+  homelab:
+    external: true
 
 volumes:
   omada-data:
