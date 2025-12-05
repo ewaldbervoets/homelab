@@ -29,9 +29,6 @@ services:
     depends_on:
       - tailscale-traefik
     network_mode: service:tailscale-traefik
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro # Docker socket to watch for Traefik
       - traefik-certs:/certs # Docker volume to store the acme file for the Certifactes
