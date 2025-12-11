@@ -1,0 +1,7 @@
+- weather:
+    label: Belgium
+    latitude: 50.85   # Brussels area
+    longitude: 4.35
+    units: metric
+    provider: open-meteo
+
