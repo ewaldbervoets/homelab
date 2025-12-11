@@ -1,3 +1,19 @@
+- resources:
+    cpu: true
+    memory: true
+    cputemp: true
+    units: metric
+    network: true
+    disk: true
+
+- datetime:
+    label: Tienen, BE
+    timezone: Europe/Brussels
+    locale: nl
+    format:
+    dateStyle: long
+    timeStyle: long
+
 - openmeteo:
     label: Tienen, BE
     latitude: 50.815932
@@ -5,4 +21,3 @@
     timezone: Europe/Brussels
     units: metric
     cache: 10
-
