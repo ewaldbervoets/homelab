@@ -1,7 +1,8 @@
-- weather:
-    label: Belgium
-    latitude: 50.85   # Brussels area
-    longitude: 4.35
+- openmeteo:
+    label: Tienen, BE
+    latitude: 50.815932
+    longitude: 4.909615
+    timezone: Europe/Brussels
     units: metric
-    provider: open-meteo
+    cache: 10
 
