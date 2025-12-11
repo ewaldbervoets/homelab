@@ -53,6 +53,12 @@ services:
       - "traefik.http.services.omada.loadbalancer.server.port=8043"
       - "traefik.http.services.omada.loadbalancer.server.scheme=https"
 
+      - "homepage.group=Network"
+      - "homepage.name=Omada"
+      - "homepage.icon=omada"
+      - "homepage.href=https://omada.ewaldbervoets.com"
+      - "homepage.description=TP-Link Omada controller"
+
 networks:
   homelab:
     external: true

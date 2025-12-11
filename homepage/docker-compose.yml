@@ -1,0 +1,31 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    ports:
+      - 3000:3000
+    volumes:
+      - ./config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro # For Docker integrations
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: homepage.ewaldbervoets.com
+    networks:
+      - homelab
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.rule=Host(`homepage.ewaldbervoets.com`)"
+      - "traefik.http.routers.homepage.entrypoints=websecure"
+      - "traefik.http.routers.homepage.tls.certresolver=letsencrypt"
+      - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+      - "traefik.http.services.homepage.loadbalancer.server.scheme=http"
+      - "traefik.http.routers.homepage.service=homepage"
+
+      - "homepage.group=Core"
+      - "homepage.name=Homepage"
+      - "homepage.icon=homepage"
+      - "homepage.href=https://homepage.ewaldbervoets.com"
+      - "homepage.description=Dashboard"
+
+networks:
+  homelab:
+    external: true

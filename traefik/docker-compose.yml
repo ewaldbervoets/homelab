@@ -64,6 +64,12 @@ services:
       - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+
+      - "homepage.group=Core"
+      - "homepage.name=Traefik"
+      - "homepage.icon=traefik"
+      - "homepage.href=https://traefik.ewaldbervoets.com"
+      - "homepage.description=Reverse proxy & router"
 volumes:
   traefik-certs:
     name: traefik-certs

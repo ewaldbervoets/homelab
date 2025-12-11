@@ -29,6 +29,13 @@ services:
       - "traefik.http.services.frigate.loadbalancer.server.scheme=http"
       - "traefik.http.routers.frigate.service=frigate"
 
+
+      - "homepage.group=Cameras"
+      - "homepage.name=Frigate"
+      - "homepage.icon=cctv"
+      - "homepage.href=https://frigate.ewaldbervoets.com"
+      - "homepage.description=NVR & object detection"
+
   frigate-diskcheck:
     image: python:3.12-slim
     container_name: frigate-diskcheck
