@@ -53,7 +53,7 @@ services:
       - "traefik.http.services.omada.loadbalancer.server.port=8043"
       - "traefik.http.services.omada.loadbalancer.server.scheme=https"
 
-      - "homepage.group=Network"
+      - "homepage.group=local"
       - "homepage.name=Omada"
       - "homepage.icon=omada"
       - "homepage.href=https://omada.ewaldbervoets.com"

@@ -30,9 +30,9 @@ services:
       - "traefik.http.routers.frigate.service=frigate"
 
 
-      - "homepage.group=Cameras"
+      - "homepage.group=local"
       - "homepage.name=Frigate"
-      - "homepage.icon=cctv"
+      - "homepage.icon=frigate"
       - "homepage.href=https://frigate.ewaldbervoets.com"
       - "homepage.description=NVR & object detection"
 

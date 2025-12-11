@@ -1,0 +1,9 @@
+title: Homelab
+language: en
+theme: dark
+color: slate
+base: https://homepage.ewaldbervoets.com
+layout:
+  - home
+  - local
+

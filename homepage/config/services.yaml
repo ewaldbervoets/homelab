@@ -1,0 +1,6 @@
+- home:
+    - Home Assistant:
+        icon: home-assistant
+        href: http://192.168.0.180:8123
+        description: Home automation
+

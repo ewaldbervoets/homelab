@@ -26,6 +26,12 @@ services:
       - "traefik.http.services.dozzle.loadbalancer.server.scheme=http"
       - "traefik.http.routers.dozzle.service=dozzle"
 
+      - "homepage.group=local"
+      - "homepage.name=Dozzle"
+      - "homepage.icon=dozzle"
+      - "homepage.href=https://dozzle.ewaldbervoets.com"
+      - "homepage.description=Docker logs"
+
 networks:
   homelab:
     external: true

@@ -20,7 +20,7 @@ services:
       - "traefik.http.services.homepage.loadbalancer.server.scheme=http"
       - "traefik.http.routers.homepage.service=homepage"
 
-      - "homepage.group=Core"
+      - "homepage.group=local"
       - "homepage.name=Homepage"
       - "homepage.icon=homepage"
       - "homepage.href=https://homepage.ewaldbervoets.com"

@@ -65,7 +65,7 @@ services:
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
 
-      - "homepage.group=Core"
+      - "homepage.group=local"
       - "homepage.name=Traefik"
       - "homepage.icon=traefik"
       - "homepage.href=https://traefik.ewaldbervoets.com"
